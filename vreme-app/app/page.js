@@ -1,5 +1,16 @@
 "use client";
 import { useState } from "react";
+import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
+import 'leaflet/dist/leaflet.css';
+import L from 'leaflet';
+
+
+delete L.Icon.Default.prototype._getIconUrl;
+L.Icon.Default.mergeOptions({
+  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
+  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
+  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
+});
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -19,7 +30,7 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 text-gray-800">
+    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 text-gray-800 p-6">
       <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
 
       <input
@@ -37,10 +48,30 @@ export default function Home() {
       </button>
 
       {weather && weather.main && (
-        <div className="mt-6 bg-white p-6 rounded shadow w-80 text-center">
+        <div className="mt-6 bg-white p-6 rounded shadow w-96 text-center">
           <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
           <p className="mb-1 capitalize">{weather.weather[0].description}</p>
           <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
+
+          
+          <div className="mt-4 h-64 w-full">
+            <MapContainer
+              center={[weather.coord.lat, weather.coord.lon]}
+              zoom={10}
+              scrollWheelZoom={false}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TileLayer
+                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+              />
+              <Marker position={[weather.coord.lat, weather.coord.lon]}>
+                <Popup>
+                  {weather.name} - {weather.weather[0].description}
+                </Popup>
+              </Marker>
+            </MapContainer>
+          </div>
         </div>
       )}
     </div>
