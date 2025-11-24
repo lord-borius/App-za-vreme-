@@ -2,6 +2,7 @@
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
+import Favorites from "@/components/Favorites";
 
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
   ssr: false,
@@ -65,6 +66,11 @@ export default function Home() {
             </div>
           </div>
         )}
+        {weather && weather.coord && (
+  <div className="mt-6 w-full flex flex-col items-center">
+    <Favorites weather={weather} />
+  </div>
+)}
       </div>
     </div>
   );
