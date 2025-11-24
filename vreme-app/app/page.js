@@ -3,7 +3,7 @@ import { useState } from "react";
 import dynamic from "next/dynamic";
 
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
-  ssr: false, 
+  ssr: false,
 });
 
 export default function Home() {
@@ -26,8 +26,20 @@ export default function Home() {
     }
   };
 
+ 
+  const getBackground = () => {
+    if (!weather || !weather.weather) return "bg-blue-50";
+
+    const main = weather.weather[0].main.toLowerCase();
+    if (main.includes("cloud")) return "bg-gray-400";
+    if (main.includes("rain") || main.includes("drizzle")) return "bg-blue-700";
+    if (main.includes("snow")) return "bg-white";
+    if (main.includes("clear")) return "bg-yellow-300";
+    return "bg-blue-50";
+  };
+
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-blue-50 text-gray-800 p-6">
+    <div className={`min-h-screen flex flex-col items-center justify-center text-gray-800 p-6 transition-colors duration-500 ${getBackground()}`}>
       <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
 
       <input
