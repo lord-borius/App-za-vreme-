@@ -1,8 +1,10 @@
 "use client";
+
 import { useState } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
 import Favorites from "@/components/Favorites";
+
 
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
   ssr: false,
@@ -12,6 +14,7 @@ export default function Home() {
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
 
+  
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
     if (!apiKey) return alert("API key ni nastavljen!");
@@ -30,28 +33,29 @@ export default function Home() {
 
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center text-gray-800 p-6 overflow-hidden">
-     
+      
       <WeatherBackground weather={weather} />
 
-      <div className="relative z-10 flex flex-col items-center">
+      <div className="relative z-10 flex flex-col items-center w-full max-w-md">
         <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
 
         <input
           value={city}
           onChange={(e) => setCity(e.target.value)}
           placeholder="Vnesi mesto..."
-          className="border border-blue-300 p-3 rounded w-72 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="border border-blue-300 p-3 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
         />
 
         <button
           onClick={getWeather}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mb-4 w-full"
         >
           Prikaži vreme
         </button>
 
+        
         {weather && weather.coord && (
-          <div className="mt-6 bg-white p-6 rounded shadow w-96 text-center relative z-10">
+          <div className="mt-6 bg-white p-6 rounded shadow w-full text-center relative z-10">
             <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
             <p className="mb-1 capitalize">{weather.weather[0].description}</p>
             <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
@@ -66,11 +70,13 @@ export default function Home() {
             </div>
           </div>
         )}
+
+       
         {weather && weather.coord && (
-  <div className="mt-6 w-full flex flex-col items-center">
-    <Favorites weather={weather} />
-  </div>
-)}
+          <div className="mt-6 w-full">
+            <Favorites weather={weather} />
+          </div>
+        )}
       </div>
     </div>
   );
