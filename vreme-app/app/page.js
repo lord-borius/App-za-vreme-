@@ -1,6 +1,10 @@
 "use client";
 import { useState } from "react";
-import WeatherMap from "@/components/WeatherMap";
+import dynamic from "next/dynamic";
+
+const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
+  ssr: false, 
+});
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -8,23 +12,14 @@ export default function Home() {
 
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
-
-    if (!apiKey) {
-      alert("API key ni nastavljen!");
-      return;
-    }
+    if (!apiKey) return alert("API key ni nastavljen!");
 
     try {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
       );
       const data = await res.json();
-
-      if (data.cod !== 200) {
-        alert(data.message);
-        return;
-      }
-
+      if (data.cod !== 200) return alert(data.message);
       setWeather(data);
     } catch (err) {
       console.error(err);
@@ -55,7 +50,6 @@ export default function Home() {
           <p className="mb-1 capitalize">{weather.weather[0].description}</p>
           <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
 
-         
           <div className="mt-4 h-64 w-full">
             <WeatherMap
               lat={weather.coord.lat}
