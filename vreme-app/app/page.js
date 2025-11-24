@@ -8,8 +8,9 @@ export default function Home() {
 
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
+
     if (!apiKey) {
-      console.error("API key ni nastavljen!");
+      alert("API key ni nastavljen!");
       return;
     }
 
@@ -18,10 +19,12 @@ export default function Home() {
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
       );
       const data = await res.json();
+
       if (data.cod !== 200) {
         alert(data.message);
         return;
       }
+
       setWeather(data);
     } catch (err) {
       console.error(err);
@@ -46,13 +49,13 @@ export default function Home() {
         Prikaži vreme
       </button>
 
-      {weather && weather.main && (
+      {weather && weather.coord && (
         <div className="mt-6 bg-white p-6 rounded shadow w-96 text-center">
           <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
           <p className="mb-1 capitalize">{weather.weather[0].description}</p>
           <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
 
-          
+         
           <div className="mt-4 h-64 w-full">
             <WeatherMap
               lat={weather.coord.lat}
