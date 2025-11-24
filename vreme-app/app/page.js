@@ -1,6 +1,7 @@
 "use client";
 import { useState } from "react";
 import dynamic from "next/dynamic";
+import WeatherBackground from "@/components/WeatherBackground";
 
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
   ssr: false,
@@ -26,52 +27,45 @@ export default function Home() {
     }
   };
 
- 
-  const getBackground = () => {
-    if (!weather || !weather.weather) return "bg-blue-50";
-
-    const main = weather.weather[0].main.toLowerCase();
-    if (main.includes("cloud")) return "bg-gray-400";
-    if (main.includes("rain") || main.includes("drizzle")) return "bg-blue-700";
-    if (main.includes("snow")) return "bg-white";
-    if (main.includes("clear")) return "bg-yellow-300";
-    return "bg-blue-50";
-  };
-
   return (
-    <div className={`min-h-screen flex flex-col items-center justify-center text-gray-800 p-6 transition-colors duration-500 ${getBackground()}`}>
-      <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
+    <div className="relative min-h-screen flex flex-col items-center justify-center text-gray-800 p-6 overflow-hidden">
+     
+      <WeatherBackground weather={weather} />
 
-      <input
-        value={city}
-        onChange={(e) => setCity(e.target.value)}
-        placeholder="Vnesi mesto..."
-        className="border border-blue-300 p-3 rounded w-72 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
-      />
+      <div className="relative z-10 flex flex-col items-center">
+        <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
 
-      <button
-        onClick={getWeather}
-        className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-      >
-        Prikaži vreme
-      </button>
+        <input
+          value={city}
+          onChange={(e) => setCity(e.target.value)}
+          placeholder="Vnesi mesto..."
+          className="border border-blue-300 p-3 rounded w-72 mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
 
-      {weather && weather.coord && (
-        <div className="mt-6 bg-white p-6 rounded shadow w-96 text-center">
-          <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
-          <p className="mb-1 capitalize">{weather.weather[0].description}</p>
-          <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
+        <button
+          onClick={getWeather}
+          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
+        >
+          Prikaži vreme
+        </button>
 
-          <div className="mt-4 h-64 w-full">
-            <WeatherMap
-              lat={weather.coord.lat}
-              lon={weather.coord.lon}
-              city={weather.name}
-              description={weather.weather[0].description}
-            />
+        {weather && weather.coord && (
+          <div className="mt-6 bg-white p-6 rounded shadow w-96 text-center relative z-10">
+            <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
+            <p className="mb-1 capitalize">{weather.weather[0].description}</p>
+            <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
+
+            <div className="mt-4 h-64 w-full">
+              <WeatherMap
+                lat={weather.coord.lat}
+                lon={weather.coord.lon}
+                city={weather.name}
+                description={weather.weather[0].description}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 }

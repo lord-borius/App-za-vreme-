@@ -7,6 +7,15 @@
   --background: #ffffff;
   --foreground: #171717;
 }
+@keyframes fall {
+  0% { transform: translateY(0); opacity: 0; }
+  50% { opacity: 1; }
+  100% { transform: translateY(100vh); opacity: 0; }
+}
+
+.animate-fall {
+  animation: fall 3s linear infinite;
+}
 
  inline {
   --color-background: var(--background);
