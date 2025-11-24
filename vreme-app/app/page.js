@@ -6,7 +6,7 @@ export default function Home() {
   const [weather, setWeather] = useState(null);
 
   const getWeather = async () => {
-    const apiKey = "ae6e3dfcb16f59bc0033c4dc5b29f15f"; 
+    const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY; 
     const res = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
     );
