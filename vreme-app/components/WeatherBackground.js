@@ -1,11 +1,32 @@
 "use client";
+import { useMemo } from "react";
+
 export default function WeatherBackground({ weather }) {
   if (!weather || !weather.weather) return null;
 
   const main = weather.weather[0].main.toLowerCase();
 
+  const raindrops = useMemo(
+    () =>
+      Array.from({ length: 20 }).map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+      })),
+    []
+  );
+
+  const snowflakes = useMemo(
+    () =>
+      Array.from({ length: 20 }).map(() => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        delay: `${Math.random() * 2}s`,
+      })),
+    []
+  );
+
   if (main.includes("clear")) {
-    
     return (
       <div className="absolute inset-0 bg-yellow-200">
         <div className="absolute top-10 right-10 w-32 h-32 rounded-full bg-yellow-400 animate-pulse opacity-80"></div>
@@ -14,7 +35,6 @@ export default function WeatherBackground({ weather }) {
   }
 
   if (main.includes("cloud")) {
-    
     return (
       <div className="absolute inset-0 bg-gray-400">
         <div className="absolute top-20 left-10 w-40 h-24 bg-gray-300 rounded-full animate-pulse opacity-70"></div>
@@ -24,17 +44,16 @@ export default function WeatherBackground({ weather }) {
   }
 
   if (main.includes("rain") || main.includes("drizzle")) {
-    
     return (
       <div className="absolute inset-0 bg-blue-700">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {raindrops.map((drop, i) => (
           <div
             key={i}
             className="absolute w-1 h-6 bg-blue-300 animate-fall"
             style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              top: `${Math.random() * 100}%`,
+              left: drop.left,
+              top: drop.top,
+              animationDelay: drop.delay,
             }}
           />
         ))}
@@ -43,17 +62,16 @@ export default function WeatherBackground({ weather }) {
   }
 
   if (main.includes("snow")) {
-    
     return (
       <div className="absolute inset-0 bg-white">
-        {Array.from({ length: 20 }).map((_, i) => (
+        {snowflakes.map((flake, i) => (
           <div
             key={i}
             className="absolute w-2 h-2 bg-gray-200 rounded-full animate-fall"
             style={{
-              left: `${Math.random() * 100}%`,
-              animationDelay: `${Math.random() * 2}s`,
-              top: `${Math.random() * 100}%`,
+              left: flake.left,
+              top: flake.top,
+              animationDelay: flake.delay,
             }}
           />
         ))}
@@ -61,6 +79,5 @@ export default function WeatherBackground({ weather }) {
     );
   }
 
-  
   return <div className="absolute inset-0 bg-blue-50"></div>;
 }
