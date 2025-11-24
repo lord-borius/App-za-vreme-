@@ -1,16 +1,6 @@
 "use client";
 import { useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
-import 'leaflet/dist/leaflet.css';
-import L from 'leaflet';
-
-
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-  iconRetinaUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-});
+import WeatherMap from "@/components/WeatherMap";
 
 export default function Home() {
   const [city, setCity] = useState("");
@@ -18,11 +8,20 @@ export default function Home() {
 
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
+    if (!apiKey) {
+      console.error("API key ni nastavljen!");
+      return;
+    }
+
     try {
       const res = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
       );
       const data = await res.json();
+      if (data.cod !== 200) {
+        alert(data.message);
+        return;
+      }
       setWeather(data);
     } catch (err) {
       console.error(err);
@@ -55,22 +54,12 @@ export default function Home() {
 
           
           <div className="mt-4 h-64 w-full">
-            <MapContainer
-              center={[weather.coord.lat, weather.coord.lon]}
-              zoom={10}
-              scrollWheelZoom={false}
-              style={{ height: "100%", width: "100%" }}
-            >
-              <TileLayer
-                attribution='&copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a>'
-                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              />
-              <Marker position={[weather.coord.lat, weather.coord.lon]}>
-                <Popup>
-                  {weather.name} - {weather.weather[0].description}
-                </Popup>
-              </Marker>
-            </MapContainer>
+            <WeatherMap
+              lat={weather.coord.lat}
+              lon={weather.coord.lon}
+              city={weather.name}
+              description={weather.weather[0].description}
+            />
           </div>
         </div>
       )}
