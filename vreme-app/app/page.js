@@ -1,10 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+iimport { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
-import Favorites from "@/components/Favorites";
-
 
 const Auth = dynamic(() => import("@/components/Auth"), { ssr: false });
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), { ssr: false });
