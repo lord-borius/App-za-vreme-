@@ -1,12 +1,13 @@
 "use client";
 
-iimport { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
 
 const Auth = dynamic(() => import("@/components/Auth"), { ssr: false });
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), { ssr: false });
 const Favorites = dynamic(() => import("@/components/Favorites"), { ssr: false });
+
 export default function Home() {
   const [user, setUser] = useState(null);
   const [city, setCity] = useState("");
@@ -41,7 +42,6 @@ export default function Home() {
     <div className="relative min-h-screen flex flex-col items-center p-6">
       <WeatherBackground weather={weather} />
 
-      
       <div className="absolute top-4 right-4 z-10">
         {user ? (
           <button
@@ -74,7 +74,6 @@ export default function Home() {
           Prikaži vreme
         </button>
 
-        
         {weather && weather.coord && (
           <div className="bg-white mt-4 p-4 rounded shadow">
             <h2 className="text-xl font-bold">{weather.name}</h2>
@@ -92,7 +91,6 @@ export default function Home() {
           </div>
         )}
 
-        
         {user ? (
           weather && <Favorites weather={weather} />
         ) : (
