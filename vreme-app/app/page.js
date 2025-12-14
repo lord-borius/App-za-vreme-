@@ -4,11 +4,10 @@ import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
 import Favorites from "@/components/Favorites";
-import Auth from "@/components/Auth";
 
-const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
-  ssr: false,
-});
+
+const Auth = dynamic(() => import("@/components/Auth"), { ssr: false });
+const WeatherMap = dynamic(() => import("@/components/WeatherMap"), { ssr: false });
 
 export default function Home() {
   const [user, setUser] = useState(null);
@@ -27,12 +26,17 @@ export default function Home() {
 
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-    );
-    const data = await res.json();
-    if (data.cod === 200) setWeather(data);
-    else alert(data.message);
+    if (!apiKey) return alert("API key ni nastavljen!");
+    try {
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+      );
+      const data = await res.json();
+      if (data.cod !== 200) return alert(data.message);
+      setWeather(data);
+    } catch (err) {
+      console.error(err);
+    }
   };
 
   return (
@@ -72,6 +76,7 @@ export default function Home() {
           Prikaži vreme
         </button>
 
+        
         {weather && weather.coord && (
           <div className="bg-white mt-4 p-4 rounded shadow">
             <h2 className="text-xl font-bold">{weather.name}</h2>
