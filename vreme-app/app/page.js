@@ -39,7 +39,7 @@ export default function Home() {
     <div className="relative min-h-screen flex flex-col items-center p-6">
       <WeatherBackground weather={weather} />
 
-      {/* Gumb za prijavo / odjavo */}
+      
       <div className="absolute top-4 right-4 z-10">
         {user ? (
           <button
@@ -94,7 +94,7 @@ export default function Home() {
           weather && <Favorites weather={weather} />
         ) : (
           <p className="mt-6 text-center text-gray-700">
-            👉 Prijavi se za shranjevanje priljubljenih mest
+             Prijavi se za shranjevanje priljubljenih mest
           </p>
         )}
       </div>
