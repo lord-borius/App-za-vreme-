@@ -8,7 +8,7 @@ import Favorites from "@/components/Favorites";
 
 const Auth = dynamic(() => import("@/components/Auth"), { ssr: false });
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), { ssr: false });
-
+const Favorites = dynamic(() => import("@/components/Favorites"), { ssr: false });
 export default function Home() {
   const [user, setUser] = useState(null);
   const [city, setCity] = useState("");
