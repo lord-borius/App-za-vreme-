@@ -1,66 +1,84 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import dynamic from "next/dynamic";
 import WeatherBackground from "@/components/WeatherBackground";
 import Favorites from "@/components/Favorites";
-
+import Auth from "@/components/Auth";
 
 const WeatherMap = dynamic(() => import("@/components/WeatherMap"), {
   ssr: false,
 });
 
 export default function Home() {
+  const [user, setUser] = useState(null);
   const [city, setCity] = useState("");
   const [weather, setWeather] = useState(null);
 
-  
+  useEffect(() => {
+    const savedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (savedUser) setUser(savedUser);
+  }, []);
+
+  const logout = () => {
+    localStorage.removeItem("loggedUser");
+    setUser(null);
+  };
+
   const getWeather = async () => {
     const apiKey = process.env.NEXT_PUBLIC_OPENWEATHER_KEY;
-    if (!apiKey) return alert("API key ni nastavljen!");
-
-    try {
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
-      );
-      const data = await res.json();
-      if (data.cod !== 200) return alert(data.message);
-      setWeather(data);
-    } catch (err) {
-      console.error(err);
-    }
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`
+    );
+    const data = await res.json();
+    if (data.cod === 200) setWeather(data);
+    else alert(data.message);
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center text-gray-800 p-6 overflow-hidden">
-      
+    <div className="relative min-h-screen flex flex-col items-center p-6">
       <WeatherBackground weather={weather} />
 
-      <div className="relative z-10 flex flex-col items-center w-full max-w-md">
-        <h1 className="text-4xl font-bold mb-6 text-blue-900">🌤️ Weather App</h1>
+      {/* Gumb za prijavo / odjavo */}
+      <div className="absolute top-4 right-4 z-10">
+        {user ? (
+          <button
+            onClick={logout}
+            className="bg-red-600 text-white px-4 py-1 rounded"
+          >
+            Odjava
+          </button>
+        ) : (
+          <Auth onLogin={setUser} />
+        )}
+      </div>
+
+      <div className="relative z-10 w-full max-w-md">
+        <h1 className="text-3xl font-bold mb-4 text-center">
+          🌤️ Weather App
+        </h1>
 
         <input
           value={city}
           onChange={(e) => setCity(e.target.value)}
-          placeholder="Vnesi mesto..."
-          className="border border-blue-300 p-3 rounded w-full mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          placeholder="Vnesi mesto"
+          className="border p-2 w-full mb-3"
         />
 
         <button
           onClick={getWeather}
-          className="bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition mb-4 w-full"
+          className="bg-blue-600 text-white w-full py-2 rounded"
         >
           Prikaži vreme
         </button>
 
-        
         {weather && weather.coord && (
-          <div className="mt-6 bg-white p-6 rounded shadow w-full text-center relative z-10">
-            <h2 className="text-2xl font-semibold mb-2">{weather.name}</h2>
-            <p className="mb-1 capitalize">{weather.weather[0].description}</p>
-            <p className="text-xl font-bold">🌡️ {weather.main.temp} °C</p>
+          <div className="bg-white mt-4 p-4 rounded shadow">
+            <h2 className="text-xl font-bold">{weather.name}</h2>
+            <p>{weather.weather[0].description}</p>
+            <p className="text-lg">{weather.main.temp} °C</p>
 
-            <div className="mt-4 h-64 w-full">
+            <div className="h-64 mt-3">
               <WeatherMap
                 lat={weather.coord.lat}
                 lon={weather.coord.lon}
@@ -71,11 +89,13 @@ export default function Home() {
           </div>
         )}
 
-       
-        {weather && weather.coord && (
-          <div className="mt-6 w-full">
-            <Favorites weather={weather} />
-          </div>
+        
+        {user ? (
+          weather && <Favorites weather={weather} />
+        ) : (
+          <p className="mt-6 text-center text-gray-700">
+            👉 Prijavi se za shranjevanje priljubljenih mest
+          </p>
         )}
       </div>
     </div>
