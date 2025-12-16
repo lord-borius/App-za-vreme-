@@ -16,7 +16,7 @@ function Recenter({ lat, lon }) {
   const map = useMap();
   useEffect(() => {
     if (lat && lon) {
-      map.setView([lat, lon], map.getZoom()); // ili map.flyTo([lat, lon], map.getZoom()) za animaciju
+      map.setView([lat, lon], map.getZoom()); 
     }
   }, [lat, lon, map]);
   return null;
