@@ -12,6 +12,16 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
+function Recenter({ lat, lon }) {
+  const map = useMap();
+  useEffect(() => {
+    if (lat && lon) {
+      map.setView([lat, lon], map.getZoom()); // ili map.flyTo([lat, lon], map.getZoom()) za animaciju
+    }
+  }, [lat, lon, map]);
+  return null;
+}
+
 export default function WeatherMap({ lat, lon, city, description }) {
   
   if (!lat || !lon) return null;
